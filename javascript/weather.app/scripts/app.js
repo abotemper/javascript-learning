@@ -7,6 +7,10 @@ const details = document.querySelector('.details');
 const time = document.querySelector('img.time');
 const icon = document.querySelector('.icon img');
 
+const forecast = new Forecast();
+
+console.log(forecast);
+
 const updateUI = (data) => {
     // const cityDets = data.cityDets;
     // const weather = data.weather;
@@ -31,12 +35,7 @@ const updateUI = (data) => {
     // console.log(icon);
     icon.setAttribute('src', iconSrc);
 
-    
-
     let timeSrc = weather.IsDayTime ? 'img/day.svg' : 'img/night.svg';
-
-
-
 
     // if(weather.IsDayTime){
     //     timeSrc = 'img/day.svg';
@@ -53,22 +52,21 @@ const updateUI = (data) => {
     }
 };
 
-const updateCity = async (city) => {
-    // console.log(city);
-    //because we put forecast.js above the app.js, so before we use it's function in the app.js
-    //the functions is already defined
-    const cityDets = await getCity(city);
-    const weather = await getWeather(cityDets.Key);
+// const updateCity = async (city) => {
+//     // console.log(city);
+//     //because we put forecast.js above the app.js, so before we use it's function in the app.js
+//     //the functions is already defined
+//     const cityDets = await getCity(city);
+//     const weather = await getWeather(cityDets.Key);
 
-    // return {
-    //     cityDets: cityDets,
-    //     weather: weather,
-    // };
+//     // return {
+//     //     cityDets: cityDets,
+//     //     weather: weather,
+//     // };
 
-    return {cityDets, weather};// same
+//     return {cityDets, weather};// same
 
-
-}
+// }
 
 cityForm.addEventListener('submit', e => {
     //prevent default actions
@@ -80,8 +78,18 @@ cityForm.addEventListener('submit', e => {
     cityForm.reset();
 
     //update the ui with new city
-    updateCity(city)
+    forecast.updateCity(city)
      .then(data => updateUI(data))
      .catch(err => console.log(err));
 
-})
+     //set local storage
+
+     localStorage.setItem('city', city);
+
+});
+
+if(localStorage.getItem('city')){
+    forecast.updateCity(localStorage.getItem('city'))
+      .then(data => updateUI(data))
+      .catch(err => console.log(err));
+}
